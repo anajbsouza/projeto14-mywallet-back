@@ -1,12 +1,10 @@
 import Joi from "joi";
 import cors from "cors";
 import dayjs from "dayjs";
-import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import express from "express";
-import { v4 as uuid } from "uuid";
 import { MongoClient, ObjectId } from "mongodb";
-import { signin, signup } from "./controllers/usuarios.js";
+import usuarioRouter from "./routes/usuarios.routes.js";
 
 // criando servidor
 const app = express();
@@ -15,6 +13,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 dotenv.config();
+
+app.use(usuarioRouter)
 
 // conexão com banco de dados
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
@@ -26,7 +26,7 @@ try {
     console.log(err.message)
 }
 
-const db = mongoClient.db("mywallet");
+export const db = mongoClient.db();
 
 
 // schemas
@@ -39,11 +39,7 @@ const schemaUser = Joi.object({
 
 // endpoints
 
-app.post("/cadastro", signup);   
 
-
-
-app.post("/login", signin);
 
 
 app.get("/usuario-logado", async(req, res) => {

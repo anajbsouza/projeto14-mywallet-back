@@ -1,3 +1,7 @@
+import bcrypt from "bcrypt";
+import { db } from "../app";
+import { v4 as uuid } from "uuid";
+
 export async function signup(req, res) {
     const { nome, email, senha } = req.body;
     const hash = bcrypt.hashSync(senha, 10);
