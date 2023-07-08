@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { db } from "../app";
+import { db } from "../database/database.connection.js";
 import { v4 as uuid } from "uuid";
 
 export async function signup(req, res) {
@@ -31,4 +31,12 @@ export async function signin(req, res) {
     } catch(err) {
         res.status(500).send(err.message);
     }
+}
+
+export async function usuarioLogado(req, res) {
+    const { authorizaton } = req.headers;
+    const token = authorizaton?.replace("Bearer ", "");
+
+    if(!token) return res.sendStatus(401);
+    res.sendStatus(201);
 }
