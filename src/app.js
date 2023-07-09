@@ -1,23 +1,14 @@
-import Joi from "joi";
 import cors from "cors";
 import express from "express";
 import router from "./routes/index.routes.js";
 
 // criando servidor
-const app = express();
+const app = express()
 
 // configurações
 app.use(cors());
 app.use(express.json());
 app.use(router);
-
-// schemas
-const schemaUser = Joi.object({
-    nome: Joi.string().required(),
-    email: Joi.string().email().required(),
-    senha: Joi.string().required().min(3)
-});
-
 
 // deixa o app escutando
 const PORT = 5000;
