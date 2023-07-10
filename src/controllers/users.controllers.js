@@ -1,13 +1,12 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import { db } from "../database/database.connection.js";
-import { schemaUsers } from "../schemas/users.schema.js";
 
 export async function signup(req, res) {
     const { nome, email, senha } = req.body;
     
     try {
-        const usuario = await db.collection("usuarios").insertOne({ email })
+        const usuario = await db.collection("usuarios").findOne({ email })
         if (usuario) return res.status(409).send("E-mail já cadastrado")
 
         const hash = bcrypt.hashSync(senha, 10);
@@ -38,11 +37,19 @@ export async function signin(req, res) {
 }
 
 
-
-export async function usuarioLogado(req, res) {
+export async function loogout(req, res) {
     const { authorizaton } = req.headers;
     const token = authorizaton?.replace("Bearer ", "");
 
     if(!token) return res.sendStatus(401);
-    res.sendStatus(201);
+
+    try {
+        const sessoes = await db.collection("sessoes").findOne({ token })
+        if (!sessoes) return res.sendStatus(401);
+
+        await db.collection("sessoes").deleteOne({ token })
+        res.sendStatus(200);
+    } catch(err) {
+        res.status(500).send(err.message);
+    }
 }
