@@ -1,17 +1,10 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import { db } from "../database/database.connection.js";
-import { schemaUsuario } from "../schemas/usuarios.schema.js";
+import { schemaUsers } from "../schemas/users.schema.js";
 
 export async function signup(req, res) {
     const { nome, email, senha } = req.body;
-    
-    const validation = schemaUsuario.validate(req.body, { abortEarly: false });
-    
-    if(validation.error) {
-        const errors = validation.error.details.map(detail => detail.message)
-        return res.status(422).send(errors)
-    }
     
     try {
         const usuario = await db.collection("usuarios").findOne({ email })
@@ -38,7 +31,6 @@ export async function signin(req, res) {
 
         const token = uuid();
         await db.collection("sessao").insertOne(token);
-        // idUsuario: usuario._id
         res.send(token);
     } catch(err) {
         res.status(500).send(err.message);

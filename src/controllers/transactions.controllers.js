@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
 import { db } from "../database/database.connection.js";
 import { v4 as uuid } from "uuid";
-import { schemaTransacoes } from "../schemas/transacoes.schema.js";
+import { schemaTransactions } from "../schemas/transactions.schema.js";
 
 export async function entrada(req, res) {
     const { valor, descricao } = req.body;
 
-    const validation = schemaTransacoes.validate(req.body, { abortEarly: false });
+    const validation = schemaTransactions.validate(req.body, { abortEarly: false });
     
     if(validation.error) {
         const errors = validation.error.details.map(detail => detail.message)
@@ -24,7 +24,7 @@ export async function entrada(req, res) {
 export async function saida(req, res) {
     const { valor, descricao } = req.body;
 
-    const validation = schemaTransacoes.validate(req.body, { abortEarly: false });
+    const validation = schemaTransactions.validate(req.body, { abortEarly: false });
     
     if(validation.error) {
         const errors = validation.error.details.map(detail => detail.message)
