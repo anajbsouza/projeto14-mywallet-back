@@ -26,10 +26,10 @@ export async function signin(req, res) {
         if (!usuario) return res.status(401).send("E-mail não cadastrado");
 
         const senhaCorreta = bcrypt.compareSync(senha, usuario.senha);
-        if (!senhaCorreta) return res.status(404).send("Senha incorreta");
+        if (!senhaCorreta) return res.status(401).send("Senha incorreta");
 
         const token = uuid();
-        await db.collection("sessao").insertOne({token, userId: usuario._id});
+        await db.collection("sessoes").insertOne({token, userId: usuario._id});
         res.send({token, userName: usuario.nome});
     } catch(err) {
         res.status(500).send(err.message);
@@ -38,7 +38,7 @@ export async function signin(req, res) {
 
 
 export async function logout(req, res) {
-    const token = res.locals.sessoes.token;
+    const { token } = res.locals.sessoes;
     try {
         await db.collection("sessoes").deleteOne({ token })
         res.sendStatus(200);

@@ -6,8 +6,8 @@ import { schemaUsers, schemaLogin } from "../schemas/users.schema.js";
 
 const userRouter = Router();
 
-userRouter.post("/sign-up", schemaValidation(schemaUsers), signup);   
-userRouter.post("/sign-in", schemaValidation(schemaLogin), signin);
+userRouter.post("/cadastro", schemaValidation(schemaUsers), signup);   
+userRouter.post("/login", schemaValidation(schemaLogin), signin);
 userRouter.post("/logout",userValidation, logout);
 
 export default userRouter;

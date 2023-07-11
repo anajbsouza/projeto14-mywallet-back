@@ -1,7 +1,5 @@
-import bcrypt from "bcrypt";
 import { db } from "../database/database.connection.js";
-import { v4 as uuid } from "uuid";
-import { schemaTransactions } from "../schemas/transactions.schema.js";
+import { ObjectId } from "mongodb";
 import dayjs from "dayjs";
 
 export async function entrada(req, res) {
@@ -19,18 +17,16 @@ export async function entrada(req, res) {
 
 
 export async function saida(req, res) {
-    const { valor, descricao } = req.body;
-
-    const validation = schemaTransactions.validate(req.body, { abortEarly: false });
-    
-    if(validation.error) {
-        const errors = validation.error.details.map(detail => detail.message)
-        return res.status(422).send(errors)
-    }
+    const { userId } = res.locals.sessoes;
     
     try {
-        await db.collection("saida").deleteOne({ valor, descricao });
-        res.sendStatus(201);
+        const transactions = await db
+        .collection("trasacoes")
+        .find({ userId })
+        .sort({data: -1})
+        .toArray();
+
+        res.send(transactions);
     } catch(err) {
         res.status(500).send(err.message);
     }
