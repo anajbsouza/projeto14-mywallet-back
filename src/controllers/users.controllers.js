@@ -37,16 +37,9 @@ export async function signin(req, res) {
 }
 
 
-export async function loogout(req, res) {
-    const { authorizaton } = req.headers;
-    const token = authorizaton?.replace("Bearer ", "");
-
-    if(!token) return res.sendStatus(401);
-
+export async function logout(req, res) {
+    const token = res.locals.sessoes.token;
     try {
-        const sessoes = await db.collection("sessoes").findOne({ token })
-        if (!sessoes) return res.sendStatus(401);
-
         await db.collection("sessoes").deleteOne({ token })
         res.sendStatus(200);
     } catch(err) {

@@ -2,24 +2,21 @@ import bcrypt from "bcrypt";
 import { db } from "../database/database.connection.js";
 import { v4 as uuid } from "uuid";
 import { schemaTransactions } from "../schemas/transactions.schema.js";
+import dayjs from "dayjs";
 
 export async function entrada(req, res) {
-    const { valor, descricao } = req.body;
-
-    const validation = schemaTransactions.validate(req.body, { abortEarly: false });
-    
-    if(validation.error) {
-        const errors = validation.error.details.map(detail => detail.message)
-        return res.status(422).send(errors)
-    }
+    const { valor, descricao, tipo } = req.body;
+    const { userId } = res.locals.sessoes;
     
     try {
-        await db.collection("entrada").insertOne({ valor, descricao });
+        const transactions = { valor: Number(valor), descricao, tipo, userId, data: dayjs().valueOf() }
+        await db.collection("trasacoes").insertOne(transactions);
         res.sendStatus(201);
     } catch(err) {
         res.status(500).send(err.message);
     }
 }
+
 
 export async function saida(req, res) {
     const { valor, descricao } = req.body;
